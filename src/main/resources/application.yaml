@@ -1,0 +1,42 @@
+spring:
+  application:
+    name: pdf-conversion-microservice
+  kafka:
+    bootstrap-servers: localhost:9094,localhost:9096
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      acks: 1
+      retries: 3
+      properties:
+        spring.json.type.mapping: ru.aksh.pdfconversion.dto.FileEventDto
+        spring.json.add.type.headers: false
+    consumer:
+      group-id: kafka-demo-group
+      auto-offset-reset: earliest
+      enable-auto-commit: true
+      key-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
+      properties:
+        spring.json.trusted.packages: ru.aksh.pdfconversion.*
+        spring.json.value.default.type: ru.aksh.pdfconversion.dto.FileEventDto
+        spring.json.use.type.headers: false
+        spring.deserializer.key.delegate.class: org.apache.kafka.common.serialization.StringDeserializer
+        spring.deserializer.value.delegate.class: org.springframework.kafka.support.serializer.JsonDeserializer
+
+app:
+  kafka:
+    topics:
+      create-pdf: ilovepdf-create-pdf
+      success-pdf: ilovepdf-success-pdf
+
+storage:
+  minio:
+    url: http://localhost:9000
+    root-user: admin
+    root-password: password
+    upload-bucket:
+      name: success-pdf
+  local:
+    input-dir: ./input
+    output-dir: ./output

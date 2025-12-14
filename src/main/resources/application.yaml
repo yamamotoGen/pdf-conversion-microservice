@@ -6,7 +6,7 @@ spring:
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
-      acks: 1
+      acks: all
       retries: 3
       properties:
         spring.json.type.mapping: ru.aksh.pdfconversion.dto.FileEventDto
@@ -14,7 +14,7 @@ spring:
     consumer:
       group-id: kafka-demo-group
       auto-offset-reset: earliest
-      enable-auto-commit: true
+      enable-auto-commit: false
       key-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
       value-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
       properties:
@@ -23,12 +23,22 @@ spring:
         spring.json.use.type.headers: false
         spring.deserializer.key.delegate.class: org.apache.kafka.common.serialization.StringDeserializer
         spring.deserializer.value.delegate.class: org.springframework.kafka.support.serializer.JsonDeserializer
+        max-poll-interval-ms: 300000
+        session-timeout-ms: 30000
+        heartbeat-interval-ms: 3000
+    listener:
+      missing-topics-fatal: false
+      ack-mode: manual_immediate
+      retry:
+        enabled: true
+        max-attempts: 3
 
 app:
   kafka:
     topics:
       create-pdf: ilovepdf-create-pdf
       success-pdf: ilovepdf-success-pdf
+      dead-letter-queue: error-topic
 
 storage:
   minio:

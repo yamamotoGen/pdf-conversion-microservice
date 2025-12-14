@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
 import ru.aksh.pdfconversion.dto.FileEventDto;
+import ru.aksh.pdfconversion.exception.KafkaRuntimeException;
 
 @Component
 @Slf4j
@@ -23,6 +24,7 @@ public class KafkaProducer {
             log.info("Продюсер отправил event в топик {}: value={}", successPdfTopic, fileEventDto);
         } catch (Exception e) {
             log.error("Ошибка отправки сообщения: {}", fileEventDto);
+            throw new KafkaRuntimeException("Ошибка отправки сообщения", e);
         }
     }
 }

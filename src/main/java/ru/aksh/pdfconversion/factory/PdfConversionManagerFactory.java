@@ -3,23 +3,20 @@ package ru.aksh.pdfconversion.factory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import ru.aksh.pdfconversion.dto.FileEventDto;
-import ru.aksh.pdfconversion.io.utils.ZipUtils;
+import ru.aksh.pdfconversion.io.utils.FileUtils;
 import ru.aksh.pdfconversion.service.PdfConversionManager;
-import ru.aksh.pdfconversion.service.SimplePdfConversionManager;
-import ru.aksh.pdfconversion.service.ZipToPdfConversionManager;
+
+import java.util.Map;
 
 @Component
 @RequiredArgsConstructor
 public class PdfConversionManagerFactory {
 
-    private final SimplePdfConversionManager simplePdfConversionManager;
-    private final ZipToPdfConversionManager zipToPdfConversionManager;
-    private final ZipUtils zipUtils;
+    private final Map<String, PdfConversionManager> pdfConversionManagerMap;
+    private final FileUtils fileUtils;
 
     public PdfConversionManager getManager(FileEventDto fileEventDto) {
-        if (zipUtils.isZipArchive(fileEventDto.fileName())) {
-            return zipToPdfConversionManager;
-        }
-        return simplePdfConversionManager;
+        String extension = fileUtils.getFileExtension(fileEventDto.fileName());
+        return pdfConversionManagerMap.get(extension);
     }
 }

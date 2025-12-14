@@ -19,25 +19,31 @@ public class TxtToPdfConverter implements PdfConverter {
     public Optional<File> convert(String inputFile, String outputFile) throws IOException, DocumentException {
         File file = new File(inputFile);
         Document pdfDocument = new Document(PageSize.A4);
-        PdfWriter.getInstance(pdfDocument, new FileOutputStream(outputFile));
-        pdfDocument.open();
 
-        Font font = new Font();
-        font.setStyle(Font.NORMAL);
-        font.setSize(11);
-        pdfDocument.add(new Paragraph("\n"));
+        try (FileOutputStream fileOutputStream = new FileOutputStream(outputFile)) {
+            PdfWriter.getInstance(pdfDocument, fileOutputStream);
+            try {
+                pdfDocument.open();
 
-        if (file.exists()) {
-            try (BufferedReader br = new BufferedReader(new FileReader(file))) {
-                String strLine;
-                while ((strLine = br.readLine()) != null) {
-                    Paragraph paragraph = new Paragraph(strLine + "\n", font);
-                    paragraph.setAlignment(Element.ALIGN_JUSTIFIED);
-                    pdfDocument.add(paragraph);
+                Font font = new Font();
+                font.setStyle(Font.NORMAL);
+                font.setSize(11);
+                pdfDocument.add(new Paragraph("\n"));
+
+                if (file.exists()) {
+                    try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+                        String strLine;
+                        while ((strLine = br.readLine()) != null) {
+                            Paragraph paragraph = new Paragraph(strLine + "\n", font);
+                            paragraph.setAlignment(Element.ALIGN_JUSTIFIED);
+                            pdfDocument.add(paragraph);
+                        }
+                    }
                 }
+            } finally {
+                pdfDocument.close();
             }
         }
-        pdfDocument.close();
         return Optional.of(new File(outputFile));
     }
 }

@@ -29,10 +29,16 @@ public class ImageToPdfConverter implements PdfConverter {
         Image image = Image.getInstance(inputFile);
         Rectangle pageSize = new Rectangle(image.getWidth(), image.getHeight());
         Document pdfDocument = new Document(pageSize, 0, 0, 0, 0);
-        PdfWriter.getInstance(pdfDocument, new FileOutputStream(outputFile));
-        pdfDocument.open();
-        pdfDocument.add(image);
-        pdfDocument.close();
+
+        try (FileOutputStream fileOutputStream = new FileOutputStream(outputFile)) {
+            PdfWriter.getInstance(pdfDocument, fileOutputStream);
+            try {
+                pdfDocument.open();
+                pdfDocument.add(image);
+            } finally {
+                pdfDocument.close();
+            }
+        }
         return Optional.of(new File(outputFile));
     }
 }

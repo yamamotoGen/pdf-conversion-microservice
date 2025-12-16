@@ -40,6 +40,11 @@ app:
       success-pdf: ilovepdf-success-pdf
       dead-letter-queue: error-topic
 
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+
 storage:
   minio:
     url: http://localhost:9000

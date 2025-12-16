@@ -25,6 +25,7 @@
         <minio.version>8.6.0</minio.version>
         <itextpdf.version>5.5.13.4</itextpdf.version>
         <apache.commons>1.28.0</apache.commons>
+        <spring-cloud.version>2025.0.0</spring-cloud.version>
     </properties>
 
 	<dependencies>
@@ -79,6 +80,10 @@
             <artifactId>commons-compress</artifactId>
             <version>${apache.commons}</version>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+        </dependency>
 
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -91,6 +96,18 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>${spring-cloud.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
 	<build>
 		<plugins>

@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import ru.aksh.pdfconversion.dto.FileEventDto;
+import ru.aksh.pdfconversion.dto.FileSuccessEventDto;
 import ru.aksh.pdfconversion.exception.IORuntimeException;
 import ru.aksh.pdfconversion.io.minio.MinioManager;
 import ru.aksh.pdfconversion.io.utils.DirectoryUtils;
@@ -58,9 +59,10 @@ public class ZipToPdfConversionManager implements PdfConversionManager {
 
         String outputZipName = baseFileName.concat("-" + uploadBucketName).concat(".zip");
         String outputZipPath = Paths.get(directoryUtils.getOutputDirectory(), outputZipName).toString();
+        String uploadBucketPath = String.join("/", uploadBucketName, outputZipName);
 
         zipUtils.createZipArchive(outputDirectory.toString(), outputZipPath);
         minioManager.upload(uploadBucketName, outputZipName, outputZipPath);
-        kafkaProducer.sendEvent(new FileEventDto(uploadBucketName, outputZipName));
+        kafkaProducer.sendEvent(new FileSuccessEventDto(fileEventDto.fileName(), uploadBucketPath));
     }
 }

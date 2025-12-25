@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import ru.aksh.pdfconversion.dto.FileEventDto;
+import ru.aksh.pdfconversion.dto.FileSuccessEventDto;
 import ru.aksh.pdfconversion.io.minio.MinioManager;
 import ru.aksh.pdfconversion.io.utils.DirectoryUtils;
 import ru.aksh.pdfconversion.io.utils.FileUtils;
@@ -31,10 +32,11 @@ public class SimplePdfConversionManager implements PdfConversionManager {
         String inputPath = Paths.get(inputDirectory, fileEventDto.fileName()).toString();
         String finalFileName = fileUtils.changeFileFormat(fileEventDto.fileName(), ".pdf");
         String outputPath = Paths.get(outputDirectory, finalFileName).toString();
+        String uploadBucketPath = String.join("/", uploadBucketName, finalFileName);
 
         minioManager.download(fileEventDto.bucketName(), fileEventDto.fileName(), inputPath);
         pdfConversionService.convertToPdf(inputPath, outputPath);
         minioManager.upload(uploadBucketName, finalFileName, outputPath);
-        kafkaProducer.sendEvent(new FileEventDto(uploadBucketName, finalFileName));
+        kafkaProducer.sendEvent(new FileSuccessEventDto(fileEventDto.fileName(), uploadBucketPath));
     }
 }

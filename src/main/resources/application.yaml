@@ -13,7 +13,7 @@ spring:
         spring.json.add.type.headers: false
     consumer:
       group-id: kafka-demo-group
-      auto-offset-reset: earliest
+      auto-offset-reset: latest
       enable-auto-commit: false
       key-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
       value-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
@@ -32,13 +32,16 @@ spring:
       retry:
         enabled: true
         max-attempts: 3
+  cloud:
+    discovery:
+      enabled: false
 
 app:
   kafka:
     topics:
       create-pdf: ilovepdf-create-pdf
       success-pdf: ilovepdf-success-pdf
-      dead-letter-queue: error-topic
+      dead-letter-queue: pdf-error-topic
 
 eureka:
   client:

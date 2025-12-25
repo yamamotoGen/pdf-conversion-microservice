@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
-import ru.aksh.pdfconversion.dto.FileEventDto;
+import ru.aksh.pdfconversion.dto.FileSuccessEventDto;
 import ru.aksh.pdfconversion.exception.KafkaRuntimeException;
 
 @Component
@@ -18,7 +18,7 @@ public class KafkaProducer {
     @Value("${app.kafka.topics.success-pdf}")
     private String successPdfTopic;
 
-    public void sendEvent(FileEventDto fileEventDto) {
+    public void sendEvent(FileSuccessEventDto fileEventDto) {
         try {
             kafkaTemplate.send(successPdfTopic, fileEventDto);
             log.info("Продюсер отправил event в топик {}: value={}", successPdfTopic, fileEventDto);
